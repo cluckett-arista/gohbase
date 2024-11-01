@@ -16,8 +16,9 @@ import (
 	"strings"
 	"time"
 
+	"gohbase/pb"
+
 	"github.com/go-zookeeper/zk"
-	"github.com/tsuna/gohbase/pb"
 	"google.golang.org/protobuf/proto"
 )
 

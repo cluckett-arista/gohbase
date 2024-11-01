@@ -12,7 +12,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/tsuna/gohbase/pb"
+	"gohbase/pb"
+
 	"google.golang.org/protobuf/proto"
 )
 

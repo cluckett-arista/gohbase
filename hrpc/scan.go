@@ -11,7 +11,8 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/tsuna/gohbase/pb"
+	"gohbase/pb"
+
 	"google.golang.org/protobuf/proto"
 )
 

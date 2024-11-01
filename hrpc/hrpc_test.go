@@ -16,9 +16,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tsuna/gohbase/filter"
-	"github.com/tsuna/gohbase/pb"
-	"github.com/tsuna/gohbase/test"
+	"gohbase/filter"
+	"gohbase/pb"
+	"gohbase/test"
+
 	"google.golang.org/protobuf/proto"
 )
 

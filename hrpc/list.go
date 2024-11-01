@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tsuna/gohbase/pb"
+	"gohbase/pb"
+
 	"google.golang.org/protobuf/proto"
 )
 

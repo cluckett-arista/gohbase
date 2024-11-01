@@ -14,12 +14,13 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/tsuna/gohbase/filter"
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/pb"
-	"github.com/tsuna/gohbase/region"
-	"github.com/tsuna/gohbase/test"
-	"github.com/tsuna/gohbase/test/mock"
+	"gohbase/filter"
+	"gohbase/hrpc"
+	"gohbase/pb"
+	"gohbase/region"
+	"gohbase/test"
+	"gohbase/test/mock"
+
 	"go.uber.org/mock/gomock"
 	"google.golang.org/protobuf/proto"
 )

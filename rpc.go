@@ -15,10 +15,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/internal/observability"
-	"github.com/tsuna/gohbase/region"
-	"github.com/tsuna/gohbase/zk"
+	"gohbase/hrpc"
+	"gohbase/internal/observability"
+	"gohbase/region"
+	"gohbase/zk"
+
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"

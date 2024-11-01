@@ -15,8 +15,9 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/tsuna/gohbase/hrpc"
-	"github.com/tsuna/gohbase/pb"
+	"gohbase/hrpc"
+	"gohbase/pb"
+
 	"google.golang.org/protobuf/proto"
 )
 
