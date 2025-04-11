@@ -78,8 +78,8 @@ func NewInfo(id uint64, namespace, table, name, startKey, stopKey []byte) hrpc.R
 
 // infoFromCell parses a KeyValue from the meta table and creates the
 // corresponding Info object.
-func infoFromCell(cell *hrpc.Cell) (hrpc.RegionInfo, error) {
-	value := cell.Value
+func infoFromCell(cell *pb.Cell) (hrpc.RegionInfo, error) {
+	value := cell.GetValue()
 	if len(value) == 0 {
 		return nil, fmt.Errorf("empty value in %q", cell)
 	} else if value[0] != 'P' {
@@ -96,7 +96,7 @@ func infoFromCell(cell *hrpc.Cell) (hrpc.RegionInfo, error) {
 		return nil, fmt.Errorf("failed to decode %q: %s", cell, err)
 	}
 	if regInfo.GetOffline() {
-		return nil, OfflineRegionError{n: string(cell.Row)}
+		return nil, OfflineRegionError{n: string(cell.GetRow())}
 	}
 	var namespace []byte
 	if !bytes.Equal(regInfo.TableName.Namespace, defaultNamespace) {
@@ -108,7 +108,7 @@ func infoFromCell(cell *hrpc.Cell) (hrpc.RegionInfo, error) {
 		regInfo.GetRegionId(),
 		namespace,
 		regInfo.TableName.Qualifier,
-		cell.Row,
+		cell.GetRow(),
 		regInfo.StartKey,
 		regInfo.EndKey,
 	), nil
@@ -121,7 +121,7 @@ func ParseRegionInfo(metaRow *hrpc.Result) (hrpc.RegionInfo, string, error) {
 	var addr string
 
 	for _, cell := range metaRow.Cells {
-		switch string(cell.Qualifier) {
+		switch string(cell.GetQualifier()) {
 		case "regioninfo":
 			var err error
 			reg, err = infoFromCell(cell)
@@ -129,7 +129,7 @@ func ParseRegionInfo(metaRow *hrpc.Result) (hrpc.RegionInfo, string, error) {
 				return nil, "", err
 			}
 		case "server":
-			value := cell.Value
+			value := cell.GetValue()
 			if len(value) == 0 {
 				continue // Empty during NSRE.
 			}

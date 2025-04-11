@@ -185,14 +185,6 @@ func (b *base) ResultChan() chan RPCResult {
 	return b.resultch
 }
 
-// Cell is the smallest level of granularity in returned results.
-// Represents a single cell in HBase (a row will have one cell for every qualifier).
-type Cell pb.Cell
-
-func (c *Cell) String() string {
-	return (*pb.Cell)(c).String()
-}
-
 // cellFromCellBlock deserializes a cell from a reader
 func cellFromCellBlock(b []byte) (*pb.Cell, uint32, error) {
 	if len(b) < 4 {
@@ -264,7 +256,7 @@ func deserializeCellBlocks(b []byte, cellsLen uint32) ([]*pb.Cell, uint32, error
 
 // Result holds a slice of Cells as well as miscellaneous information about the response.
 type Result struct {
-	Cells   []*Cell
+	Cells   []*pb.Cell
 	Stale   bool
 	Partial bool
 	// Exists is only set if existence_only was set in the request query.
@@ -295,8 +287,8 @@ func ToLocalResult(pbr *pb.Result) *Result {
 	}
 }
 
-func toLocalCells(pbr *pb.Result) []*Cell {
-	return *(*[]*Cell)(unsafe.Pointer(&pbr.Cell))
+func toLocalCells(pbr *pb.Result) []*pb.Cell {
+	return *(*[]*pb.Cell)(unsafe.Pointer(&pbr.Cell))
 }
 
 // We can now define any helper functions on Result that we want.

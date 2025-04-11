@@ -281,9 +281,9 @@ func TestGetMultipleCells(t *testing.T) {
 		t.Errorf("Get expected 2 cells. Received: %d", num_results)
 	}
 	for _, cell := range cells {
-		if !bytes.Equal(cell.Family, cell.Value) {
+		if !bytes.Equal(cell.GetFamily(), cell.GetValue()) {
 			t.Errorf("Get returned an incorrect result. Expected: %v, Received: %v",
-				cell.Family, cell.Value)
+				cell.GetFamily(), cell.GetValue())
 		}
 	}
 }
@@ -406,9 +406,9 @@ func TestPutMultipleCells(t *testing.T) {
 		t.Errorf("Get expected 3 cells. Received: %d", len(cells))
 	}
 	for _, cell := range cells {
-		if !bytes.Equal(cell.Qualifier, cell.Value) {
+		if !bytes.Equal(cell.GetQualifier(), cell.GetValue()) {
 			t.Errorf("Get returned an incorrect result. Expected: %v, Received: %v",
-				cell.Qualifier, cell.Value)
+				cell.GetQualifier(), cell.GetValue())
 		}
 	}
 
@@ -434,7 +434,7 @@ func TestMultiplePutsGetsSequentially(t *testing.T) {
 		if len(rsp.Cells) != 1 {
 			t.Errorf("Incorrect number of cells returned by Get: %d", len(rsp.Cells))
 		}
-		rsp_value := rsp.Cells[0].Value
+		rsp_value := rsp.Cells[0].GetValue()
 		if !bytes.Equal(rsp_value, []byte(fmt.Sprintf("%d", i))) {
 			t.Errorf("Get returned an incorrect result. Expected: %v, Got: %v",
 				[]byte(fmt.Sprintf("%d", i)), rsp_value)
@@ -547,7 +547,7 @@ func TestDelete(t *testing.T) {
 
 	tests := []struct {
 		in  func(string) (*hrpc.Mutate, error)
-		out []*hrpc.Cell
+		out []*pb.Cell
 	}{
 		{
 			// delete at the second version
@@ -557,38 +557,38 @@ func TestDelete(t *testing.T) {
 					hrpc.TimestampUint64(ts+1))
 			},
 			// should delete everything at and before the delete timestamp
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 1),
 					Value:     []byte("v2"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
@@ -604,44 +604,44 @@ func TestDelete(t *testing.T) {
 					hrpc.TimestampUint64(ts+1), hrpc.DeleteOneVersion())
 			},
 			// should delete only the second version
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 1),
 					Value:     []byte("v2"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
@@ -657,32 +657,32 @@ func TestDelete(t *testing.T) {
 					hrpc.TimestampUint64(ts+1))
 			},
 			// should leave cf2 untouched
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 1),
 					Value:     []byte("v2"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
@@ -701,8 +701,8 @@ func TestDelete(t *testing.T) {
 						},
 					})
 			},
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
@@ -718,38 +718,38 @@ func TestDelete(t *testing.T) {
 						"cf1": nil,
 					}, hrpc.TimestampUint64(ts), hrpc.DeleteOneVersion())
 			},
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 1),
 					Value:     []byte("v2"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 1),
 					Value:     []byte("v2"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts),
 					Value:     []byte("v1"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("b"),
 					Timestamp: proto.Uint64(ts),
@@ -770,14 +770,14 @@ func TestDelete(t *testing.T) {
 				return hrpc.NewDelStr(context.Background(), table, key, nil,
 					hrpc.TimestampUint64(ts+1))
 			},
-			out: []*hrpc.Cell{
-				&hrpc.Cell{
+			out: []*pb.Cell{
+				&pb.Cell{
 					Family:    []byte("cf1"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
 					Value:     []byte("v3"),
 				},
-				&hrpc.Cell{
+				&pb.Cell{
 					Family:    []byte("cf2"),
 					Qualifier: []byte("a"),
 					Timestamp: proto.Uint64(ts + 2),
